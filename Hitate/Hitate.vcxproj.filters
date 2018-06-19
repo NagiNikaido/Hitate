@@ -14,4 +14,38 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="hitate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hutils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hobject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hcamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hscene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="hitate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hobject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hutils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hscene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hcamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
