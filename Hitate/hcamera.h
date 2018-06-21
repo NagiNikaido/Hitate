@@ -27,10 +27,11 @@ private:
 class HEyeCamera : public HCamera {
 public:
 	HEyeCamera();
-	HEyeCamera(HVec3 _eye, HVec3 _front, HVec3 _refUp, double _fovX, double _fovY);
+	HEyeCamera(HVec3 _eye, HVec3 _front, HVec3 _refUp, double _fovX, double _XYRatio);
 	virtual ~HEyeCamera();
 	virtual HRay calcRay(double x, double y);
 private:
 	HVec3 eye, front, up, right;
-	double fovX, fovY, fovScaleX, fovScaleY;
+	//double fovX, fovY, fovScaleX, fovScaleY;
+	double fovScaleX, fovScaleY;
 };

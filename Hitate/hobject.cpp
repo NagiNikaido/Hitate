@@ -2,19 +2,55 @@
 
 HObject::HObject()
 {
+	metadata = "HObject";
+}
+
+std::string HObject::getMetadata()
+{
+	return metadata;
+}
+
+HMaterial HObject::getMaterial()
+{
+	return material;
+}
+
+void HObject::setMaterial(HMaterial _material)
+{
+	material = _material;
 }
 
 HObject::~HObject()
 {
 }
 
-HSphere::HSphere()
+HIntersection::HIntersection()
 {
+	hit = false;
+	obj = nullptr;
 }
 
-HSphere::HSphere(HVec3 _o, double _r)
+HIntersection::HIntersection(HVec3 _pos, HVec3 _norm, bool _hit, bool _front, double _dis, HObject *_obj)
 {
-	o = _o, r = _r;
+	pos = _pos, norm = _norm, hit = _hit, front = _front, dis = _dis, obj = _obj;
+}
+
+void HIntersection::update(HIntersection tr)
+{
+	if (!hit && tr.hit || tr.hit && tr.dis < dis) {
+		*this = tr;
+	}
+}
+
+HSphere::HSphere()
+{
+	metadata = "HSphere";
+}
+
+HSphere::HSphere(HVec3 _o, double _r, HMaterial _material)
+{
+	metadata = "HSphere";
+	o = _o, r = _r, material = _material;
 }
 
 HSphere::~HSphere()
@@ -23,28 +59,46 @@ HSphere::~HSphere()
 
 HIntersection HSphere::intersect(HRay ray)
 {
-	double a = ray.d.len2(), b = ray.d.dotPro(ray.op - o), c = (ray.op - o).len2();
-	double D = b * b - a * (c - r * r);
+	double b = ray.d.dotPro(o - ray.op), c = (ray.op - o).len2();
+	double D = b * b - c + r * r;
 	HIntersection res;
-	if(D>=-_Eps) {
-		res.dis = (-b - sqrt(abs(D))) / a;
-		res.pos = ray.calcPoint(res.dis);
-		res.norm = (res.pos - o) / r;
-		res.isHit = true;
+	if (D>_Eps) {
+		D = sqrt(D);
+		double x1 = b - D, x2 = b + D;
+		if (x2 < _Eps) res.hit = false;
+		else {
+			if (x1 > _Eps) {
+				res.dis = x1;
+				res.pos = ray.calcPoint(res.dis);
+				res.front = true;
+				res.norm = (res.pos - o) / r;
+			}
+			else {
+				res.dis = x2;
+				res.pos = ray.calcPoint(res.dis);
+				res.front = false;
+				res.norm = (o - res.pos) / r;
+			}
+			res.hit = true;
+			res.obj = this;
+		}
 	}
 	else {
-		res.isHit = false;
+		res.hit = false;
 	}
 	return res;
 }
 
 HPlane::HPlane()
 {
+	metadata = "HPlane";
 }
 
-HPlane::HPlane(HVec3 _p, HVec3 _norm)
+HPlane::HPlane(HVec3 _p, HVec3 _norm, HMaterial _material)
 {
-	p = _p, norm = _norm;
+	metadata = "HPlane";
+	p = _p, norm = _norm, material = _material;
+	norm.normalize();
 }
 
 HPlane::~HPlane()
@@ -54,19 +108,13 @@ HPlane::~HPlane()
 HIntersection HPlane::intersect(HRay ray)
 {
 	double a = norm.dotPro(ray.d), b = norm.dotPro(ray.op - p);
-	if (abs(a) < _Eps) {
-		return HIntersection(ray.op, norm, true, 0.0);
+	double l;
+	if (abs(b) < _Eps) {
+		return HIntersection(ray.op, norm, true, true, 0.0, this);
 	}
-	else if (abs(b) < _Eps) {
+	else if (abs(a) < _Eps || (l=-b/a)<_Eps) {
 		return HIntersection();
 	}
-	else {
-		HIntersection res;
-		res.dis = -b / a;
-		res.pos = ray.calcPoint(res.dis);
-		res.norm = norm;
-		res.isHit = true;
-		return res;
-	}
+	return HIntersection(ray.calcPoint(l), a < 0 ? -norm : norm, true, a < 0, l, this);
 }
 

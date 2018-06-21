@@ -122,16 +122,22 @@
   <ItemGroup>
     <ClCompile Include="hcamera.cpp" />
     <ClCompile Include="hitate.cpp" />
+    <ClCompile Include="hlightsource.cpp" />
+    <ClCompile Include="hmaterial.cpp" />
     <ClCompile Include="hobject.cpp" />
-    <ClCompile Include="hscene.cpp" />
+    <ClCompile Include="hobjectunion.cpp" />
     <ClCompile Include="hutils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hcamera.h" />
     <ClInclude Include="hitate.h" />
+    <ClInclude Include="hlightsource.h" />
+    <ClInclude Include="hmaterial.h" />
     <ClInclude Include="hobject.h" />
+    <ClInclude Include="hobjectunion.h" />
+    <ClInclude Include="hraytracer.hpp" />
     <ClInclude Include="hutils.h" />
-    <ClInclude Include="hscene.h" />
+    <ClInclude Include="hscene.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

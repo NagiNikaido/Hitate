@@ -27,7 +27,13 @@
     <ClCompile Include="hcamera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="hscene.cpp">
+    <ClCompile Include="hobjectunion.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hlightsource.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hmaterial.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,10 +47,22 @@
     <ClInclude Include="hutils.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="hscene.h">
+    <ClInclude Include="hcamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="hcamera.h">
+    <ClInclude Include="hlightsource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hobjectunion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hscene.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hmaterial.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hraytracer.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

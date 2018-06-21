@@ -25,10 +25,17 @@ HVec3 HVec3::crossPro(HVec3 b)
 	return HVec3(y*b.z - z * b.y, z*b.x - x * b.z, x*b.y - y * b.x);
 }
 
-void HVec3::normalize()
+HVec3& HVec3::normalize()
 {
 	double r = this->len();
 	x /= r, y /= r, z /= r;
+	return *this;
+}
+
+HVec3 HVec3::normalized()
+{
+	double r = this->len();
+	return HVec3(x / r, y / r, z / r);
 }
 
 double HVec3::len()
@@ -41,9 +48,22 @@ double HVec3::len2()
 	return x * x + y * y + z * z;
 }
 
+HVec3 HVec3::randomVec()
+{
+	double theta = randd() * 2 * CV_PI;
+	double gamma = (randd() - .5) * CV_PI;
+	double sint = sin(theta), cost = cos(theta), sing = sin(gamma), cosg = cos(gamma);
+	return HVec3(cosg * cost, cosg * sint, sing);
+}
+
+double randd()
+{
+	return double(rand()) / RAND_MAX;
+}
+
 HVec3 operator+(HVec3 a, HVec3 b)
 {
-	return HVec3(a.x+b.x, a.y+b.y, a.z+b.z);
+	return HVec3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 HVec3 operator-(HVec3 a, HVec3 b)
@@ -66,6 +86,30 @@ HVec3 operator/(HVec3 a, double b)
 	return HVec3(a.x / b, a.y / b, a.z / b);
 }
 
+HVec3 & operator+=(HVec3 & a, HVec3 b)
+{
+	a.x += b.x; a.y += b.y; a.z += b.z;
+	return a;
+}
+
+HVec3 & operator-=(HVec3 & a, HVec3 b)
+{
+	a.x -= b.x; a.y -= b.y; a.z -= b.z;
+	return a;
+}
+
+HVec3 & operator*=(HVec3 & a, double b)
+{
+	a.x *= b; a.y *= b; a.z *= b;
+	return a;
+}
+
+HVec3 & operator/=(HVec3 & a, double b)
+{
+	a.x /= b; a.y /= b; a.z /= b;
+	return a;
+}
+
 HColor operator+(HColor a, HColor b)
 {
 	return HColor(a.r + b.r, a.g + b.g, a.b + b.b);
@@ -79,6 +123,29 @@ HColor operator*(HColor a, double b)
 HColor operator*(double a, HColor b)
 {
 	return HColor(a*b.r, a*b.g, a*b.b);
+}
+
+HColor operator*(HColor a, HColor b)
+{
+	return HColor(a.r*b.r, a.g*b.g, a.b*b.b);
+}
+
+HColor & operator+=(HColor & a, HColor b)
+{
+	a.r += b.r; a.g += b.g; a.b += b.b;
+	return a;
+}
+
+HColor & operator*=(HColor & a, double b)
+{
+	a.r *= b; a.g *= b; a.b *= b;
+	return a;
+}
+
+HColor & operator*=(HColor & a, HColor b)
+{
+	a.r *= b.r; a.g *= b.g; a.b *= b.b;
+	return a;
 }
 
 HColor::HColor()
@@ -106,32 +173,38 @@ Pixel HColor::toPixel()
 	return res;
 }
 
+HColor HColor::exp()
+{
+	return HColor(::exp(r), ::exp(g), ::exp(b));
+}
+
+HColor HColor::operator-(void)
+{
+	return HColor(-r, -g, -b);
+}
+
 HRay::HRay()
 {
 }
 
 HRay::HRay(HVec3 _op, HVec3 _d)
 {
-	op = _op, d = _d;
+	op = _op, d = _d.normalized();
 }
 
 HVec3 HRay::calcPoint(double t)
 {
-	return op+t*d;
+	return op + t * d;
 }
 
-HIntersection::HIntersection()
+HRay HRay::reflect(HVec3 hitPoint, HVec3 norm)
 {
+	return HRay(hitPoint, d-norm*(2*d.dotPro(norm)));
 }
 
-HIntersection::HIntersection(HVec3 _pos, HVec3 _norm, bool _isHit, double _dis)
+HRay HRay::refract(HVec3 hitPoint, HVec3 norm, double n)
 {
-	pos = _pos, norm = _norm, isHit = _isHit, dis = _dis;
-}
-
-void HIntersection::update(HIntersection tr)
-{
-	if (!isHit && tr.isHit || tr.isHit && tr.dis < dis) {
-		*this = tr;
-	}
+	double cosi = -d.dotPro(norm), cost2 = 1 - n * n*(1 - cosi * cosi);
+	if (cost2 > _Eps) return HRay(hitPoint, d*n + norm * (n*cosi - sqrt(cost2)));
+	return reflect(hitPoint, norm);
 }

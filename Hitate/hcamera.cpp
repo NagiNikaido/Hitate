@@ -27,16 +27,15 @@ HEyeCamera::HEyeCamera()
 {
 }
 
-HEyeCamera::HEyeCamera(HVec3 _eye, HVec3 _front, HVec3 _refUp, double _fovX, double _fovY)
+HEyeCamera::HEyeCamera(HVec3 _eye, HVec3 _front, HVec3 _refUp, double _fovX, double _YXRatio)
 {
 	eye = _eye;
-	front = _front;
-	right = front.crossPro(_refUp);
+	front = _front.normalized();
+	right = front.crossPro(_refUp).normalized();
 	up = right.crossPro(front);
-	fovX = _fovX;
-	fovY = _fovY;
-	fovScaleX = tan(fovX * (CV_PI * 0.5 / 180)) * 2;
-	fovScaleY = tan(fovY * (CV_PI * 0.5 / 180)) * 2;
+	//fovX = _fovX;
+	fovScaleX = tan(_fovX * (CV_PI * 0.5 / 180)) * 2;
+	fovScaleY = fovScaleX * _YXRatio;
 }
 
 HEyeCamera::~HEyeCamera()
@@ -45,7 +44,7 @@ HEyeCamera::~HEyeCamera()
 
 HRay HEyeCamera::calcRay(double x, double y)
 {
-	HVec3 tmp = front + right * (x - .5)*fovScaleX + up * (y - .5)*fovScaleY;
+	HVec3 tmp = front + right * (x - .5) * fovScaleX + up * (y - .5) * fovScaleY;
 	tmp.normalize();
 	return HRay(eye,tmp);
 }
