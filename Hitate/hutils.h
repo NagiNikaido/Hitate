@@ -33,6 +33,7 @@ struct HColor {
 	HColor();
 	HColor(double _r, double _g, double _b);
 	void saturate();
+	HColor saturated();
 	Pixel toPixel();
 	HColor exp();
 	HColor operator- (void);

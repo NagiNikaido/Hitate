@@ -175,6 +175,11 @@ void HColor::saturate()
 	b = b > 1.0 ? 1.0 : b;
 }
 
+HColor HColor::saturated()
+{
+	return HColor(r > 1.0 ? 1.0 : r, g > 1.0 ? 1.0 : g, b > 1.0 ? 1.0 : b);
+}
+
 Pixel HColor::toPixel()
 {
 	Pixel res;
@@ -210,12 +215,12 @@ HVec3 HRay::calcPoint(double t)
 
 HRay HRay::reflect(HVec3 hitPoint, HVec3 norm)
 {
-	return HRay(hitPoint, d-norm*(2*d.dotPro(norm)));
+	return HRay(hitPoint, d - norm * 2 * d.dotPro(norm));
 }
 
 HRay HRay::refract(HVec3 hitPoint, HVec3 norm, double n)
 {
-	double cosi = -d.dotPro(norm), cost2 = 1 - n * n*(1 - cosi * cosi);
-	if (cost2 > _Eps) return HRay(hitPoint, d*n + norm * (n*cosi - sqrt(cost2)));
+	double cosi = -d.dotPro(norm), cost2 = 1 - n * n * (1 - cosi * cosi);
+	if (cost2 > _Eps) return HRay(hitPoint, d * n + norm * (n * cosi - sqrt(cost2)));
 	return reflect(hitPoint, norm);
 }

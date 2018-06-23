@@ -13,12 +13,14 @@ protected:
 	Object_Union_T *objUnion;
 	std::vector<HLightSource *> lightSourceList;
 	HColor background;
+	int shadeQuality, drflQuality;
 public:
 	HScene()
 	{
 		camera = nullptr;
 		objUnion = new Object_Union_T;
 		background = HColor(0, 0, 0);
+		shadeQuality = 1;  drflQuality = 16;
 	}
 	virtual ~HScene()
 	{
@@ -35,6 +37,14 @@ public:
 	void setBackground(HColor _background)
 	{
 		background = _background;
+	}
+	void setShadeQuality(int _shadeQuality)
+	{
+		shadeQuality = _shadeQuality;
+	}
+	void setDrflQuality(int _drflQuality)
+	{
+		drflQuality = _drflQuality;
 	}
 	void addLightSource(HLightSource *_lightSource)
 	{

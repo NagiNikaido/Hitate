@@ -10,27 +10,23 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 		HMaterial material = obj->getMaterial();
 		HColor res = material.color * this->background * material.diff;
 		HRay ray = inter.ray;
-//		if (res.r > _Eps || res.g > _Eps || res.b > _Eps) printf("Here!");
-		for (auto light : this->lightSourceList) {
-			res += light->calcShade(this->objUnion, inter);
-		}
-
+		for (auto light : this->lightSourceList) 
+			res += light->calcShade(this->objUnion, inter, this->shadeQuality);
 		return res;
 	}
 	HColor calcRefl(HIntersection inter, double weight, int depth)
 	{
 		HObject *obj = inter.obj;
 		HMaterial material = obj->getMaterial();
-		//HColor res = material.color * this->background * material.diff;
 		HRay ray = inter.ray.reflect(inter.pos, inter.norm);
-		return material.color * material.refl * rayTrace(ray, weight*material.refl, depth + 1);
-		//return HColor(0, 0, 0);
+		
+		return material.color * material.refl * rayTrace(ray, weight*material.refl, depth - 1);
 	}
 	HColor calcRefr(HIntersection inter, double weight, int depth)
 	{
 		HObject *obj = inter.obj;
 		HMaterial material = obj->getMaterial();
-		HRay ray = inter.ray.refract(inter.pos, inter.norm, inter.front ? material.rindex : 1 / material.rindex);
+		HRay ray = inter.ray.refract(inter.pos, inter.norm, inter.front ? 1 / material.rindex : material.rindex);
 
 		HColor rr = rayTrace(ray, weight*material.refr, depth + 1);
 		if (inter.front) return rr * material.refr;
@@ -39,13 +35,13 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 	}
 	HColor rayTrace(HRay ray, double weight, int depth)
 	{
-		if (!depth || weight<_Eps) return HColor(0, 0, 0);
+		if (depth>=_Max_Raytrace_Depth || weight<_Eps) return HColor(0, 0, 0);
 		HIntersection light, object;
 		HColor res(0, 0, 0);
 		light = this->lightIntersect(ray);
 		object = this->objUnion->intersect(ray);
 		if (light.hit && (!object.hit || object.dis > light.dis)) {
-			res = light.obj->getMaterial().color;
+			res = light.obj->getMaterial().color.saturated();
 		}
 		if (object.hit) {
 			HObject *obj = object.obj;
@@ -66,33 +62,10 @@ public:
 		this->objUnion->buildStructure();
 		double dx = 1. / w, dy = 1. / h;
 		double sx = dx / 2, sy = dy / 2;
-		/*
-		for (int y = 0; y < h; y++)
-			for (int x = 0; x < w; x++) {
-				HRay ray = this->camera->calcRay(sx + dx * x, 1 - sx - dy * y);
-				canvas.at<Pixel>(y, x) = rayTrace(ray, 1, _Max_Raytrace_Depth).toPixel();
-			}
-		*/
 		
 		canvas.forEach<Pixel>([&](Pixel& pixel, const int pos[]) -> void {
 			HRay ray = this->camera->calcRay(sx + dx * pos[1], 1 - sy - dy * pos[0]);
-			pixel = rayTrace(ray, 1, _Max_Raytrace_Depth).toPixel();
-			/*
-			if (pos[0] == 514 && pos[1] == 529) {
-				std::cout << pixel << endl;
-				auto object = this->objUnion->intersect(ray);
-				std::cout << object.hit << endl;
-				std::cout << ray.d.x << ',' << ray.d.y << ',' << ray.d.z << endl;
-				std::cout << ray.op.x << ',' << ray.op.y << ',' << ray.op.z << endl;
-				std::cout << object.pos.x << ',' <<object.pos.y << ',' <<object.pos.z << endl;
-				std::cout << object.norm.x << ',' << object.norm.y << ',' << object.norm.z << endl;
-				for (auto light : this->lightSourceList) {
-					cout << light->getMetadata() << endl;
-					double shade = light->calcShade(this->objUnion, object);
-					cout << shade << endl;
-				}
-			}
-			*/
+			pixel = rayTrace(ray, 1, 0).toPixel();
 		});
 		
 		return true;
