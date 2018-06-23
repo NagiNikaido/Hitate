@@ -23,11 +23,12 @@ public:
 
 struct HIntersection {
 	HVec3 pos, norm;
+	HRay ray;
 	bool hit, front;
 	double dis;
 	HObject *obj;
 	HIntersection();
-	HIntersection(HVec3 _pos, HVec3 _norm, bool _hit, bool _front, double _dis, HObject * _obj);
+	HIntersection(HVec3 _pos, HVec3 _norm, HRay _ray, bool _hit, bool _front, double _dis, HObject * _obj);
 	void update(HIntersection tr);
 };
 

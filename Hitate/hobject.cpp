@@ -30,9 +30,9 @@ HIntersection::HIntersection()
 	obj = nullptr;
 }
 
-HIntersection::HIntersection(HVec3 _pos, HVec3 _norm, bool _hit, bool _front, double _dis, HObject *_obj)
+HIntersection::HIntersection(HVec3 _pos, HVec3 _norm, HRay _ray,bool _hit, bool _front, double _dis, HObject *_obj)
 {
-	pos = _pos, norm = _norm, hit = _hit, front = _front, dis = _dis, obj = _obj;
+	pos = _pos, norm = _norm, ray = _ray, hit = _hit, front = _front, dis = _dis, obj = _obj;
 }
 
 void HIntersection::update(HIntersection tr)
@@ -81,6 +81,7 @@ HIntersection HSphere::intersect(HRay ray)
 			}
 			res.hit = true;
 			res.obj = this;
+			res.ray = ray;
 		}
 	}
 	else {
@@ -109,12 +110,9 @@ HIntersection HPlane::intersect(HRay ray)
 {
 	double a = norm.dotPro(ray.d), b = norm.dotPro(ray.op - p);
 	double l;
-	if (abs(b) < _Eps) {
-		return HIntersection(ray.op, norm, true, true, 0.0, this);
-	}
-	else if (abs(a) < _Eps || (l=-b/a)<_Eps) {
+	if (abs(b) < _Eps || abs(a) < _Eps || (l=-b/a)<_Eps) {
 		return HIntersection();
 	}
-	return HIntersection(ray.calcPoint(l), a < 0 ? -norm : norm, true, a < 0, l, this);
+	return HIntersection(ray.calcPoint(l), a < 0 ? norm : -norm, ray, true, a < 0, l, this);
 }
 

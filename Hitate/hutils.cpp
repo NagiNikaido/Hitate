@@ -125,6 +125,11 @@ HColor operator*(double a, HColor b)
 	return HColor(a*b.r, a*b.g, a*b.b);
 }
 
+HColor operator/(HColor a, double b)
+{
+	return HColor(a.r / b, a.g / b, a.b / b);
+}
+
 HColor operator*(HColor a, HColor b)
 {
 	return HColor(a.r*b.r, a.g*b.g, a.b*b.b);
@@ -145,6 +150,12 @@ HColor & operator*=(HColor & a, double b)
 HColor & operator*=(HColor & a, HColor b)
 {
 	a.r *= b.r; a.g *= b.g; a.b *= b.b;
+	return a;
+}
+
+HColor & operator/=(HColor & a, double b)
+{
+	a.r /= b; a.g /= b; a.b /= b;
 	return a;
 }
 

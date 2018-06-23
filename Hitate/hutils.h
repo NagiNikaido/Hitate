@@ -41,10 +41,12 @@ struct HColor {
 HColor operator+ (HColor a, HColor b);
 HColor operator* (HColor a, double b);
 HColor operator* (double a, HColor b);
+HColor operator/ (HColor a, double b); 
 HColor operator* (HColor a, HColor b);
 HColor& operator+= (HColor &a, HColor b);
 HColor& operator*= (HColor &a, double b);
 HColor& operator*= (HColor &a, HColor b);
+HColor& operator/= (HColor &a, double b);
 
 struct HRay {
 	HVec3 op, d;
