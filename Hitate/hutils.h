@@ -15,6 +15,7 @@ struct HVec3 {
 	HVec3 normalized();
 	double len();
 	double len2();
+	double &$(int axis);
 	static HVec3 randomVec();
 };
 
@@ -33,6 +34,7 @@ struct HColor {
 	HColor();
 	HColor(double _r, double _g, double _b);
 	void saturate();
+	double energy();
 	HColor saturated();
 	Pixel toPixel();
 	HColor exp();

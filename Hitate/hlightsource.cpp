@@ -65,6 +65,15 @@ HPointLightSource::~HPointLightSource()
 {
 }
 
+HPhoton HPointLightSource::emitPhoton()
+{
+	HPhoton ph;
+	ph.color = getColor() / getColor().energy();
+	ph.ray.op = pos;
+	ph.ray.d = HVec3::randomVec();
+	return ph;
+}
+
 HColor HPointLightSource::calcShade(HObjectUnion * objUnion, HIntersection intersection, int shadeQuality)
 {
 	HRay shadeRay(intersection.pos, pos - intersection.pos);
@@ -88,6 +97,16 @@ HAreaLightSource::HAreaLightSource(HColor _color, HVec3 _pos, HVec3 _dx, HVec3 _
 
 HAreaLightSource::~HAreaLightSource()
 {
+}
+
+HPhoton HAreaLightSource::emitPhoton()
+{
+	HPhoton ph;
+	ph.color = getColor() / getColor().energy();
+	ph.ray.op = pos + dx * (randd() * 2 - 1) + dy * (randd() * 2 - 1);
+	ph.ray.d = HVec3::randomVec();
+	if (ph.ray.d.dotPro(norm) < 0) ph.ray.d = -ph.ray.d;
+	return ph;
 }
 
 HColor HAreaLightSource::calcShade(HObjectUnion * objUnion, HIntersection intersection, int shadeQuality)

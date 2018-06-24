@@ -4,6 +4,7 @@
 #include "hutils.h"
 #include "hobject.h"
 #include "hobjectunion.h"
+#include "hphoton.h"
 
 class HLightSource : public HObject{
 public:
@@ -13,6 +14,7 @@ public:
 	HColor calcL(HIntersection, HVec3);
 	virtual ~HLightSource();
 	virtual HVec3 getG() = 0;
+	virtual HPhoton emitPhoton() = 0;
 	virtual HIntersection intersect(HRay ray);
 	virtual HColor calcShade(HObjectUnion *objUnion, HIntersection intersection, int shadeQuality = 1);
 };
@@ -25,6 +27,7 @@ public:
 	HPointLightSource(HColor _color, HVec3 _pos);
 	virtual ~HPointLightSource();
 	virtual HVec3 getG() { return pos; }
+	virtual HPhoton emitPhoton();
 	virtual HColor calcShade(HObjectUnion *objUnion, HIntersection intersection, int shadeQuality = 1);
 };
 
@@ -36,6 +39,7 @@ public:
 	HAreaLightSource(HColor _color, HVec3 _pos, HVec3 _dx, HVec3 _dy);
 	virtual ~HAreaLightSource();
 	virtual HVec3 getG() { return pos; }
+	virtual HPhoton emitPhoton();
 	virtual HColor calcShade(HObjectUnion *objUnion, HIntersection intersection, int shadeQuality = 1);
 	virtual HIntersection intersect(HRay ray);
 };

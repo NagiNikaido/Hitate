@@ -126,6 +126,7 @@
     <ClCompile Include="hmaterial.cpp" />
     <ClCompile Include="hobject.cpp" />
     <ClCompile Include="hobjectunion.cpp" />
+    <ClCompile Include="hphoton.cpp" />
     <ClCompile Include="hutils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +136,7 @@
     <ClInclude Include="hmaterial.h" />
     <ClInclude Include="hobject.h" />
     <ClInclude Include="hobjectunion.h" />
+    <ClInclude Include="hphoton.h" />
     <ClInclude Include="hraytracer.hpp" />
     <ClInclude Include="hutils.h" />
     <ClInclude Include="hscene.hpp" />

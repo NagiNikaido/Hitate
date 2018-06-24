@@ -48,6 +48,14 @@ double HVec3::len2()
 	return x * x + y * y + z * z;
 }
 
+double & HVec3::$(int axis)
+{
+	if (axis == 0) return x;
+	if (axis == 1) return y;
+	if (axis == 2) return z;
+	return x;
+}
+
 HVec3 HVec3::randomVec()
 {
 	double theta = randd() * 2 * CV_PI;
@@ -173,6 +181,11 @@ void HColor::saturate()
 	r = r > 1.0 ? 1.0 : r;
 	g = g > 1.0 ? 1.0 : g;
 	b = b > 1.0 ? 1.0 : b;
+}
+
+double HColor::energy()
+{
+	return (r + g + b) / 3;
 }
 
 HColor HColor::saturated()
