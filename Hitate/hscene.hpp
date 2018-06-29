@@ -69,24 +69,4 @@ public:
 			inter.update(light->intersect(ray));
 		return inter;
 	}
-	virtual bool render(cv::Mat & canvas, int w, int h)
-	{
-		if (!camera || objUnion->empty()) return false;
-		objUnion->buildStructure();
-		double dx = 1. / w, dy = 1. / h;
-		double sx = dx / 2, sy = dy / 2;
-		canvas.forEach<Pixel>([&](Pixel& pixel, const int pos[]) -> void {
-			HRay ray = camera->calcRay(sx + dx * pos[1], 1 - sy - dy * pos[0]);
-			
-			HIntersection res = objUnion->intersect(ray);
-
-			HColor rc;
-			if (!res.hit) rc = background;
-			else rc = HColor(1. / res.dis, 1. / res.dis, 1. / res.dis);
-
-			pixel = rc.toPixel();
-			
-		});
-		return true;
-	}
 };

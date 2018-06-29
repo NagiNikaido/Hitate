@@ -148,9 +148,9 @@ public:
 		max_sample_photons = 500;
 		max_sample_dist = 1;
 	}
-	virtual bool render(cv::Mat & canvas, int w, int h)
+	bool render(cv::Mat & canvas, int w, int h)
 	{
-		srand(1998 - 6 - 7 + time(0));
+		srand(1998 - 06 - 07 + time(0));
 		if (!this->camera || this->objUnion->empty()) return false;
 		this->objUnion->buildStructure();
 		this->buildPhotonMap();
@@ -159,8 +159,10 @@ public:
 		int sum = 0, total = w * h;
 		std::mutex mtx;
 		canvas.forEach<Pixel>([&](Pixel& pixel, const int pos[]) -> void {
-			HRay ray = this->camera->calcRay(sx + dx * pos[1], 1 - sy - dy * pos[0]);
-			pixel = rayTrace(ray, 1, 0).toPixel();
+			pixel = this->camera->calcPixel(dx, dy, pos[1], pos[0],
+				[this](HRay ray) -> HColor {
+					return this->rayTrace(ray, 1, 0);
+			}).toPixel();
 			mtx.lock();
 			if ((++sum) % 10000 == 0) printf("%.2lf%% was done.\n", 100.*sum / total);
 			mtx.unlock();
