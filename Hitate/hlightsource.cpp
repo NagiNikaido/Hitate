@@ -21,8 +21,8 @@ HColor HLightSource::calcL(HIntersection inter, HVec3 shader)
 	HColor res(0, 0, 0);
 	HVec3 h = shader.normalized() - inter.ray.d;
 	HMaterial m = inter.obj->getMaterial();
-	double r1 = shader.normalized().dotPro(inter.norm);
-	double r2 = h.dotPro(inter.norm) / sqrt(2);
+	double r1 = shader.normalized().dot(inter.norm);
+	double r2 = h.dot(inter.norm) / sqrt(2);
 	double d = shader.len2();
 	if (r1 > _Eps && m.diff > _Eps) {
 		res += m.color * getColor() * m.diff * r1 / d;
@@ -92,7 +92,7 @@ HAreaLightSource::HAreaLightSource(HColor _color, HVec3 _pos, HVec3 _dx, HVec3 _
 	metadata = "HAreaLightSource";
 	material = HMaterial(_color);
 	pos = _pos; dx = _dx; dy = _dy;
-	norm = dx.crossPro(dy).normalized();
+	norm = dx.cross(dy).normalized();
 }
 
 HAreaLightSource::~HAreaLightSource()
@@ -105,7 +105,7 @@ HPhoton HAreaLightSource::emitPhoton()
 	ph.color = getColor() / getColor().energy();
 	ph.ray.op = pos + dx * (randd() * 2 - 1) + dy * (randd() * 2 - 1);
 	ph.ray.d = HVec3::randomVec();
-	if (ph.ray.d.dotPro(norm) < 0) ph.ray.d = -ph.ray.d;
+	//if (ph.ray.d.dot(norm) < 0) ph.ray.d = -ph.ray.d;
 	return ph;
 }
 
@@ -125,12 +125,12 @@ HColor HAreaLightSource::calcShade(HObjectUnion * objUnion, HIntersection inters
 
 HIntersection HAreaLightSource::intersect(HRay ray)
 {
-	double d = ray.d.dotPro(norm);
+	double d = ray.d.dot(norm);
 	if (abs(d) < _Eps) return HIntersection();
-	double l = (norm * pos.dotPro(norm) - ray.op).dotPro(norm) / d;
+	double l = (norm * pos.dot(norm) - ray.op).dot(norm) / d;
 	if (l < _Eps) return HIntersection();
 	HVec3 t = (ray.op + ray.d * l) - pos;
-	if (abs(dx.dotPro(t)) > dx.len2()) return HIntersection();
-	if (abs(dy.dotPro(t)) > dy.len2()) return HIntersection();
+	if (abs(dx.dot(t)) > dx.len2()) return HIntersection();
+	if (abs(dy.dot(t)) > dy.len2()) return HIntersection();
 	return HIntersection(t + pos, norm, ray, true, true, l, this);
 }

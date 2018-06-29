@@ -127,6 +127,13 @@
     <ClCompile Include="hobject.cpp" />
     <ClCompile Include="hobjectunion.cpp" />
     <ClCompile Include="hphoton.cpp" />
+    <ClCompile Include="hpoly.cpp" />
+    <ClCompile Include="htriangle.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="htriangleunion.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="hutils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +144,10 @@
     <ClInclude Include="hobject.h" />
     <ClInclude Include="hobjectunion.h" />
     <ClInclude Include="hphoton.h" />
+    <ClInclude Include="hpoly.h" />
     <ClInclude Include="hraytracer.hpp" />
+    <ClInclude Include="htriangle.h" />
+    <ClInclude Include="htriangleunion.h" />
     <ClInclude Include="hutils.h" />
     <ClInclude Include="hscene.hpp" />
   </ItemGroup>

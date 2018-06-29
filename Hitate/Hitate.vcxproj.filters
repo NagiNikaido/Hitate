@@ -39,6 +39,15 @@
     <ClCompile Include="hphoton.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="htriangle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="htriangleunion.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hpoly.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hitate.h">
@@ -69,6 +78,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="hphoton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hpoly.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="htriangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="htriangleunion.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

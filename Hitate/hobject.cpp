@@ -59,7 +59,7 @@ HSphere::~HSphere()
 
 HIntersection HSphere::intersect(HRay ray)
 {
-	double b = ray.d.dotPro(o - ray.op), c = (ray.op - o).len2();
+	double b = ray.d.dot(o - ray.op), c = (ray.op - o).len2();
 	double D = b * b - c + r * r;
 	HIntersection res;
 	if (D>_Eps) {
@@ -108,7 +108,7 @@ HPlane::~HPlane()
 
 HIntersection HPlane::intersect(HRay ray)
 {
-	double a = norm.dotPro(ray.d), b = norm.dotPro(ray.op - p);
+	double a = norm.dot(ray.d), b = norm.dot(ray.op - p);
 	double l;
 	if (abs(b) < _Eps || abs(a) < _Eps || (l=-b/a)<_Eps) {
 		return HIntersection();

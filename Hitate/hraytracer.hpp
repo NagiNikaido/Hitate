@@ -48,7 +48,7 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 		light = this->lightIntersect(ray);
 		object = this->objUnion->intersect(ray);
 		if (light.hit && (!object.hit || object.dis > light.dis)) {
-			res = light.obj->getMaterial().color.saturated();
+			return light.obj->getMaterial().color.saturated();
 		}
 		if (object.hit) {
 			HObject *obj = object.obj;
@@ -70,7 +70,7 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 			p -= de; return false;
 		}
 		ph.ray.d = HVec3::randomVec();
-		if (ph.ray.d.dotPro(inter.norm) < _Eps) ph.ray.d = -ph.ray.d;
+		if (ph.ray.d.dot(inter.norm) < _Eps) ph.ray.d = -ph.ray.d;
 		ph.color = ph.color * M.color / M.color.energy();
 		photonTrace(ph, depth + 1);
 		return true;
@@ -111,12 +111,6 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 			HMaterial M = object.obj->getMaterial();
 			ph.ray.op = object.pos;
 			if (object.obj->getMaterial().diff > _Eps && depth) photonMap->insertPhoton(ph);
-			/*
-			double p = randd();
-			if ((p -= (M.diff+M.spec)) < 0) photonDiff(ph, object, depth);
-			else if ((p -= M.refl) < 0) photonRefl(ph, object, depth);
-			else if ((p -= M.refr) < 0) photonRefr(ph, object, depth);
-			*/
 			double p = 1;
 			if (photonDiff(ph, object, depth, p)) return;
 			if (photonRefl(ph, object, depth, p)) return;
@@ -135,13 +129,6 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 			for (double cE = light->getColor().energy(); cE >= E; cE -= E) {
 				HPhoton photon = light->emitPhoton();
 				photon.color *= sumE;
-				/*
-				if (1) {
-					printf("r = %lf, g = %lf, b = %lf\n", photon.color.r, photon.color.g, photon.color.b);
-					printf("op = (%lf, %lf, %lf),\n", photon.ray.op.x, photon.ray.op.y, photon.ray.op.z);
-					printf("d = (%lf, %lf, %lf),\n", photon.ray.d.x, photon.ray.d.y, photon.ray.d.z);
-				}
-				*/
 				photonTrace(photon, 0);
 				if ((++count) % 1000000 == 0) {
 					printf("A total of %d photons have been emitted.\n", count);
@@ -163,7 +150,7 @@ public:
 	}
 	virtual bool render(cv::Mat & canvas, int w, int h)
 	{
-		srand(1926 - 8 - 17 + time(0));
+		srand(1998 - 6 - 7 + time(0));
 		if (!this->camera || this->objUnion->empty()) return false;
 		this->objUnion->buildStructure();
 		this->buildPhotonMap();

@@ -9,8 +9,8 @@ struct HVec3 {
 	HVec3();
 	HVec3(double _x, double _y, double _z);
 	HVec3 operator-(void);
-	double dotPro(HVec3 a);
-	HVec3 crossPro(HVec3 a);
+	double dot(HVec3 a);
+	HVec3 cross(HVec3 a);
 	HVec3& normalize();
 	HVec3 normalized();
 	double len();

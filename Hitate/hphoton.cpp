@@ -73,9 +73,9 @@ HColor HPhotonMap::calcL(HIntersection inter, double max_dist, int max_sample)
 	query(1, inter.pos, inter.norm, nph);
 	if (nph.size <= _Min_Photon_Sample_Size) return res;
 	for (int i = 1; i <= nph.size; i++)
-		if (inter.norm.dotPro(nph.lst[i].second->ray.d) < 0)
+		if (inter.norm.dot(nph.lst[i].second->ray.d) < 0)
 			res += nph.lst[i].second->color;
-	return res * 4 / nph.lst[0].first / total;
+	return res / nph.lst[0].first / total;
 }
 
 void HPhotonMap::build(HPhoton *tph, int c, int l, int r) {

@@ -31,8 +31,8 @@ HEyeCamera::HEyeCamera(HVec3 _eye, HVec3 _front, HVec3 _refUp, double _fovX, dou
 {
 	eye = _eye;
 	front = _front.normalized();
-	right = front.crossPro(_refUp).normalized();
-	up = right.crossPro(front);
+	right = front.cross(_refUp).normalized();
+	up = right.cross(front);
 	//fovX = _fovX;
 	fovScaleX = tan(_fovX * (CV_PI * 0.5 / 180)) * 2;
 	fovScaleY = fovScaleX * _YXRatio;

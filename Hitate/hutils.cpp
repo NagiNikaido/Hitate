@@ -1,7 +1,7 @@
 #include "hutils.h"
 #include <cmath>
 
-double HVec3::dotPro(HVec3 b)
+double HVec3::dot(HVec3 b)
 {
 	return x * b.x + y * b.y + z * b.z;
 }
@@ -20,7 +20,7 @@ HVec3 HVec3::operator-(void)
 	return HVec3(-x, -y, -z);
 }
 
-HVec3 HVec3::crossPro(HVec3 b)
+HVec3 HVec3::cross(HVec3 b)
 {
 	return HVec3(y*b.z - z * b.y, z*b.x - x * b.z, x*b.y - y * b.x);
 }
@@ -58,10 +58,11 @@ double & HVec3::$(int axis)
 
 HVec3 HVec3::randomVec()
 {
-	double theta = randd() * 2 * CV_PI;
-	double gamma = (randd() - .5) * CV_PI;
-	double sint = sin(theta), cost = cos(theta), sing = sin(gamma), cosg = cos(gamma);
-	return HVec3(cosg * cost, cosg * sint, sing);
+	double x, y, z;
+	do {
+		x = 2 * randd() - 1, y = 2 * randd() - 1, z = 2 * randd() - 1;
+	} while (x*x + y * y + z * z > 1 || x * x + y * y + z * z < _Eps);
+	return HVec3(x, y, z).normalized();
 }
 
 double randd()
@@ -228,12 +229,12 @@ HVec3 HRay::calcPoint(double t)
 
 HRay HRay::reflect(HVec3 hitPoint, HVec3 norm)
 {
-	return HRay(hitPoint, d - norm * 2 * d.dotPro(norm));
+	return HRay(hitPoint, d - norm * 2 * d.dot(norm));
 }
 
 HRay HRay::refract(HVec3 hitPoint, HVec3 norm, double n)
 {
-	double cosi = -d.dotPro(norm), cost2 = 1 - n * n * (1 - cosi * cosi);
+	double cosi = -d.dot(norm), cost2 = 1 - n * n * (1 - cosi * cosi);
 	if (cost2 > _Eps) return HRay(hitPoint, d * n + norm * (n * cosi - sqrt(cost2)));
 	return reflect(hitPoint, norm);
 }

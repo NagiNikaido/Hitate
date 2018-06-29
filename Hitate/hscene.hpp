@@ -4,6 +4,7 @@
 #include "hcamera.h"
 #include "hobjectunion.h"
 #include "hlightsource.h"
+#include "hpoly.h"
 #include <vector>
 
 template<class Object_Union_T = HObjectVector>
