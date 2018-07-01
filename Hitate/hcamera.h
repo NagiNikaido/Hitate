@@ -24,11 +24,12 @@ private:
 class HApertureCamera : public HCamera {
 public:
 	HApertureCamera();
-	HApertureCamera(HVec3 _oC, double _r, double _f, HVec3 _front, HVec3 _refUp, double _fovX, double _YXRatio);
+	HApertureCamera(HVec3 _oC, double _r, double _f, HVec3 _front, HVec3 _refUp, double _fovX, double _YXRatio, int _quality);
 	virtual ~HApertureCamera();
 	virtual HColor calcPixel(double dx, double dy, int px, int py, std::function<HColor(HRay)> RT);
 private:
 	HVec3 oC, front, up, right;
 	double r, u, f;
 	double fovScaleX, fovScaleY;
+	int quality;
 };

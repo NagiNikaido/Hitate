@@ -1,4 +1,5 @@
 #include "hcamera.h"
+#include <mutex>
 
 HCamera::HCamera()
 {
@@ -40,9 +41,9 @@ HApertureCamera::HApertureCamera()
 {
 }
 
-HApertureCamera::HApertureCamera(HVec3 _oC, double _r, double _f, HVec3 _front, HVec3 _refUp, double _fovX, double _YXRatio)
+HApertureCamera::HApertureCamera(HVec3 _oC, double _r, double _f, HVec3 _front, HVec3 _refUp, double _fovX, double _YXRatio, int _quality)
 {
-	oC = _oC; r = _r; f = _f;
+	oC = _oC; r = _r; f = _f; quality = _quality;
 	front = _front.normalized();
 	right = front.cross(_refUp).normalized();
 	up = right.cross(front);
@@ -61,14 +62,21 @@ HColor HApertureCamera::calcPixel(double dx, double dy, int px, int py, std::fun
 	HVec3 tmp = front + right * (x - .5) * fovScaleX + up * (y - .5) * fovScaleY;
 	tmp.normalize();
 	HVec3 pos = oC + tmp * f;
+	std::mutex mtx;
 	HColor res(0, 0, 0);
-	for (int i = 0; i < 128; i++) {
-		do {
-			x = randd(), y = randd();
-		} while (x * x + y * y > 1);
-		HVec3 st = oC + up * r*y + right * r*x;
-		res += RT(HRay(st, pos - st));
-	}
-	res /= 128;
+	cv::parallel_for_(cv::Range(0, quality), [&](const cv::Range &range) -> void {
+		double x, y;
+		for (int i = 0; i < range.size(); i++) {
+			do {
+				x = randd(), y = randd();
+			} while (x * x + y * y > 1);
+			HVec3 st = oC + up * r*y + right * r*x;
+			HColor tmp = RT(HRay(st, pos - st));
+			mtx.lock();
+			res += tmp;
+			mtx.unlock();
+		}
+	});
+	res /= quality;
 	return res;
 }

@@ -4,12 +4,11 @@
 #include "hphoton.h"
 #include <mutex>
 
-template<class Object_Union_T = HObjectVector>
-class HRaytracer : public HScene<typename Object_Union_T> {
+class HRaytracer : public HScene {
 	HPhotonMap *photonMap;
 	int max_store_photons, max_emit_photons, max_sample_photons;
 	double max_sample_dist;
-	
+	int shadeQuality, drflQuality, NxSSAA;
 	HColor calcDiff(HIntersection inter)
 	{
 		HObject *obj = inter.obj;
@@ -140,13 +139,28 @@ class HRaytracer : public HScene<typename Object_Union_T> {
 		photonMap->buildStructure();
 		printf("photon map done.\n");
 	}
-
 public:
 	HRaytracer() {
+		shadeQuality = 1;  drflQuality = 16; NxSSAA = 1;
 		max_store_photons = 1000000;
 		max_emit_photons = 10000000;
 		max_sample_photons = 500;
 		max_sample_dist = 1;
+	}
+	virtual ~HRaytracer() {
+		if(photonMap) delete photonMap;
+	}
+	void setShadeQuality(int _shadeQuality)
+	{
+		shadeQuality = _shadeQuality;
+	}
+	void setDrflQuality(int _drflQuality)
+	{
+		drflQuality = _drflQuality;
+	}
+	void setNxSSAA(int _NxSSAA)
+	{
+		NxSSAA = _NxSSAA;
 	}
 	bool render(cv::Mat & canvas, int w, int h)
 	{
@@ -154,9 +168,11 @@ public:
 		if (!this->camera || this->objUnion->empty()) return false;
 		this->objUnion->buildStructure();
 		this->buildPhotonMap();
-		double dx = 1. / w, dy = 1. / h;
+		int ww = w * NxSSAA, hh = h * NxSSAA;
+		canvas = cv::Mat(hh, ww, CV_8UC3, cv::Scalar(255, 255, 255));
+		double dx = 1. / ww, dy = 1. / hh;
 		double sx = dx / 2, sy = dy / 2;
-		int sum = 0, total = w * h;
+		int sum = 0, total = ww * hh;
 		std::mutex mtx;
 		canvas.forEach<Pixel>([&](Pixel& pixel, const int pos[]) -> void {
 			pixel = this->camera->calcPixel(dx, dy, pos[1], pos[0],
@@ -167,7 +183,7 @@ public:
 			if ((++sum) % 10000 == 0) printf("%.2lf%% was done.\n", 100.*sum / total);
 			mtx.unlock();
 		});
-		
+		if (NxSSAA > 1) cv::resize(canvas, canvas, cv::Size(canvas.size[1] / NxSSAA, canvas.size[0] / NxSSAA));
 		return true;
 	}
 };
